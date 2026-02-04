@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import com.aprendendoSpring.course.entities.Category;
 import com.aprendendoSpring.course.entities.Order;
 import com.aprendendoSpring.course.entities.OrderItem;
+import com.aprendendoSpring.course.entities.Payment;
 import com.aprendendoSpring.course.entities.Product;
 import com.aprendendoSpring.course.entities.User;
 import com.aprendendoSpring.course.enums.OrderStatus;
@@ -79,6 +80,11 @@ public class TestConfig implements CommandLineRunner {
 		OrderItem oi4 = new OrderItem(o3, p5, 2, p5.getPrice()); 
 		
 		orderItemRepository.saveAll(Arrays.asList(oi1,oi2,oi3,oi4));
+		
+		Payment pay1 = new Payment(null,Instant.parse("2019-07-22T17:21:22Z"),o3);
+		o3.setPayment(pay1);
+		
+		orderRepository.save(o3);
 		
 	}
 
