@@ -4,10 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.aprendendoSpring.course.entities.User;
 import com.aprendendoSpring.course.repositories.UserRepository;
+import com.aprendendoSpring.course.service.exceptions.DatabaseException;
+import com.aprendendoSpring.course.service.exceptions.ResourceNotFoundExceptions;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -22,7 +28,7 @@ public class UserService {
 	
 	public User findById(Long id) {
 		Optional<User> obj = repository.findById(id);
-		return obj.get();
+		return obj.orElseThrow(() -> new ResourceNotFoundExceptions(id));
 	}
 
 	public User insert(User obj) {
@@ -30,13 +36,27 @@ public class UserService {
 	}
 	
 	public void delete(long id) {
-		repository.deleteById(id);
+	
+		try {
+			repository.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundExceptions(id);
+		} 
+		catch (DataIntegrityViolationException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+		
 	}
 	
 	public User update(long id, User obj) {
-		User entity=repository.getReferenceById(id);
+		
+		try {
+			User entity=repository.getReferenceById(id);
 		updateData(entity,obj);
 		return repository.save(entity);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundExceptions(id);
+		}
 				
 	}
 
