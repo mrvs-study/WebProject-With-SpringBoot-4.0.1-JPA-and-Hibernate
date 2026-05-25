@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Easy Market API",
-    "description": "Collection para testar endpoints principais do Easy Market.",
+    "description": "Collection simples para testar endpoints principais do Easy Market.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -12,36 +12,222 @@
   ],
   "item": [
     {
-      "name": "Produtos",
+      "name": "Gerente",
       "item": [
         {
-          "name": "Criar produto",
+          "name": "Cadastrar estoquista",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": "{{base_url}}/produtos",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/gerentes/1/funcionarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Paulo Estoquista\",\n  \"cpf\": \"22233344455\",\n  \"email\": \"paulo.estoquista@easymarket.com\",\n  \"telefone\": \"81977776666\",\n  \"senha\": \"123456\",\n  \"cargo\": \"ESTOQUISTA\",\n  \"salario\": 1900.0,\n  \"dataDeAdmissao\": \"2026-05-22T00:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cadastrar operador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/gerentes/1/funcionarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Operador\",\n  \"cpf\": \"11122233344\",\n  \"email\": \"carlos.operador@easymarket.com\",\n  \"telefone\": \"81988887777\",\n  \"senha\": \"123456\",\n  \"cargo\": \"OPERADOR\",\n  \"salario\": 1800.0,\n  \"dataDeAdmissao\": \"2026-05-22T00:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar funcionários pelo gerente",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/gerentes/1/funcionarios"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Estoquista",
+      "item": [
+        {
+          "name": "Registrar produto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/estoquistas/3/produtos",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nome\": \"Arroz\",\n  \"categoria\": \"Alimentos\",\n  \"preco\": 6.50,\n  \"dataDeValidade\": \"2026-12-31T00:00:00Z\",\n  \"imgUrlProduto\": \"https://exemplo.com/arroz.png\"\n}"
             }
           }
         },
-        { "name": "Listar produtos", "request": { "method": "GET", "url": "{{base_url}}/produtos" } },
-        { "name": "Buscar produto por ID", "request": { "method": "GET", "url": "{{base_url}}/produtos/1" } },
+        {
+          "name": "Listar produtos pelo estoquista",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/estoquistas/3/produtos"
+          }
+        },
         {
           "name": "Atualizar produto",
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": "{{base_url}}/produtos/1",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/estoquistas/3/produtos/1",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nome\": \"Arroz Tipo 1\",\n  \"categoria\": \"Alimentos\",\n  \"preco\": 7.00,\n  \"dataDeValidade\": \"2026-12-31T00:00:00Z\",\n  \"imgUrlProduto\": \"https://exemplo.com/arroz.png\"\n}"
             }
           }
         },
-        { "name": "Remover produto", "request": { "method": "DELETE", "url": "{{base_url}}/produtos/1" } },
-        { "name": "Produtos próximos do vencimento", "request": { "method": "GET", "url": "{{base_url}}/produtos/proximos-vencimento?dias=30" } }
+        {
+          "name": "Remover produto",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/estoquistas/3/produtos/1"
+          }
+        },
+        {
+          "name": "Localizar produto",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/estoquistas/3/produtos/1/localizacao"
+          }
+        },
+        {
+          "name": "Registrar entrada no estoque",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/estoquistas/3/movimentacoes/entrada",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estoqueId\": 1,\n  \"quantidade\": 10,\n  \"motivo\": \"Reposição\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar saída no estoque",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/estoquistas/3/movimentacoes/saida",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estoqueId\": 1,\n  \"quantidade\": 5,\n  \"motivo\": \"Venda\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Operador",
+      "item": [
+        {
+          "name": "Registrar venda",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/operadores/2/vendas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 2\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar pagamento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/operadores/2/pagamentos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendaId\": 1,\n  \"formaPagamento\": \"PIX\",\n  \"valor\": 13.00\n}"
+            }
+          }
+        },
+        {
+          "name": "Processar pagamento",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/operadores/2/pagamentos/1/processar"
+          }
+        },
+        {
+          "name": "Cancelar venda",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/operadores/2/vendas/1/cancelar"
+          }
+        },
+        {
+          "name": "Emitir nota",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/operadores/2/vendas/1/nota"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Produtos",
+      "item": [
+        {
+          "name": "Listar produtos",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/produtos"
+          }
+        },
+        {
+          "name": "Buscar produto por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/produtos/1"
+          }
+        }
       ]
     },
     {
@@ -51,7 +237,12 @@
           "name": "Criar cliente",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": "{{base_url}}/clientes",
             "body": {
               "mode": "raw",
@@ -59,27 +250,56 @@
             }
           }
         },
-        { "name": "Listar clientes", "request": { "method": "GET", "url": "{{base_url}}/clientes" } }
+        {
+          "name": "Listar clientes",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/clientes"
+          }
+        },
+        {
+          "name": "Buscar cliente por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/clientes/1"
+          }
+        }
       ]
     },
     {
-      "name": "Vendas",
+      "name": "Fornecedores",
       "item": [
         {
-          "name": "Registrar venda",
+          "name": "Criar fornecedor",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": "{{base_url}}/vendas",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/fornecedores",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"clienteId\": 1,\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 2\n    }\n  ]\n}"
+              "raw": "{\n  \"razaoSocial\": \"Distribuidora Recife Alimentos LTDA\",\n  \"cnpj\": \"12345678000199\",\n  \"telefone\": \"8133334444\",\n  \"email\": \"contato@recifealimentos.com\",\n  \"cep\": \"50000000\"\n}"
             }
           }
         },
-        { "name": "Listar vendas", "request": { "method": "GET", "url": "{{base_url}}/vendas" } },
-        { "name": "Finalizar venda", "request": { "method": "PUT", "url": "{{base_url}}/vendas/1/finalizar" } },
-        { "name": "Vendas por status", "request": { "method": "GET", "url": "{{base_url}}/vendas/status/FINALIZADA" } }
+        {
+          "name": "Listar fornecedores",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/fornecedores"
+          }
+        },
+        {
+          "name": "Buscar fornecedor por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/fornecedores/1"
+          }
+        }
       ]
     },
     {
@@ -89,7 +309,12 @@
           "name": "Cadastrar estoque",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": "{{base_url}}/estoques",
             "body": {
               "mode": "raw",
@@ -97,9 +322,56 @@
             }
           }
         },
-        { "name": "Produtos sem estoque", "request": { "method": "GET", "url": "{{base_url}}/estoques/sem-estoque" } },
-        { "name": "Entrada de estoque", "request": { "method": "PUT", "url": "{{base_url}}/estoques/1/entrada?quantidade=10&motivo=Reposição" } },
-        { "name": "Saída de estoque", "request": { "method": "PUT", "url": "{{base_url}}/estoques/1/saida?quantidade=5&motivo=Venda" } }
+        {
+          "name": "Listar estoques",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/estoques"
+          }
+        },
+        {
+          "name": "Produtos sem estoque",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/estoques/sem-estoque"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vendas",
+      "item": [
+        {
+          "name": "Registrar venda",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/vendas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 2\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar vendas",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/vendas"
+          }
+        },
+        {
+          "name": "Vendas por status",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/vendas/status/FINALIZADA"
+          }
+        }
       ]
     },
     {
@@ -109,7 +381,12 @@
           "name": "Registrar pagamento",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": "{{base_url}}/pagamentos",
             "body": {
               "mode": "raw",
@@ -117,8 +394,20 @@
             }
           }
         },
-        { "name": "Processar pagamento", "request": { "method": "PUT", "url": "{{base_url}}/pagamentos/1/processar" } },
-        { "name": "Pagamentos pendentes", "request": { "method": "GET", "url": "{{base_url}}/pagamentos/pendentes" } }
+        {
+          "name": "Processar pagamento",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/pagamentos/1/processar"
+          }
+        },
+        {
+          "name": "Pagamentos pendentes",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/pagamentos/pendentes"
+          }
+        }
       ]
     },
     {
@@ -128,7 +417,12 @@
           "name": "Registrar compra",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": "{{base_url}}/compras",
             "body": {
               "mode": "raw",
@@ -136,7 +430,13 @@
             }
           }
         },
-        { "name": "Compras por fornecedor", "request": { "method": "GET", "url": "{{base_url}}/compras/fornecedor/1" } }
+        {
+          "name": "Compras por fornecedor",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/compras/fornecedor/1"
+          }
+        }
       ]
     },
     {
@@ -146,7 +446,12 @@
           "name": "Registrar entrada",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "url": "{{base_url}}/movimentacoes-estoque/entrada",
             "body": {
               "mode": "raw",
@@ -154,7 +459,13 @@
             }
           }
         },
-        { "name": "Movimentações por tipo", "request": { "method": "GET", "url": "{{base_url}}/movimentacoes-estoque/tipo/ENTRADA" } }
+        {
+          "name": "Movimentações por tipo",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/movimentacoes-estoque/tipo/ENTRADA"
+          }
+        }
       ]
     }
   ]

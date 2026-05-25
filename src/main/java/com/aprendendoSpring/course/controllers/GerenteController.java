@@ -33,6 +33,28 @@ public class GerenteController {
     public GerenteController(GerenteService gerenteService) {
         this.gerenteService = gerenteService;
     }
+    
+    @GetMapping("/{idGerente}/estoquistas")
+    @Operation(summary = "Listar estoquistas")
+    public ResponseEntity<List<FuncionarioResponseDTO>> listarEstoquistas(@PathVariable Long idGerente) {
+        List<FuncionarioResponseDTO> lista = gerenteService.listarEstoquistas(idGerente)
+                .stream()
+                .map(FuncionarioResponseDTO::fromEntity)
+                .toList();
+
+        return ResponseEntity.ok(lista);
+    }
+    @GetMapping("/{idGerente}/operadores")
+    @Operation(summary = "Listar operadores")
+    public ResponseEntity<List<FuncionarioResponseDTO>> listarOperadores(@PathVariable Long idGerente) {
+        List<FuncionarioResponseDTO> lista = gerenteService.listarOperadores(idGerente)
+                .stream()
+                .map(FuncionarioResponseDTO::fromEntity)
+                .toList();
+
+        return ResponseEntity.ok(lista);
+    }
+
 
     @GetMapping("/{idGerente}/relatorio")
     @Operation(summary = "Gerar relatório geral do sistema")

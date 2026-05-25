@@ -29,6 +29,7 @@ public class OperadorController {
 	public OperadorController(OperadorService operadorService) {
 		this.operadorService = operadorService;
 	}
+	
 
 	@PostMapping("/{idOperador}/vendas")
 	@Operation(summary = "Registrar venda")

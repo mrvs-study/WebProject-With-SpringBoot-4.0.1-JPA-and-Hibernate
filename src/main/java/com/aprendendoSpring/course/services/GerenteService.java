@@ -59,6 +59,24 @@ public class GerenteService {
         );
     }
 
+    public List<Funcionario> listarOperadores(Long idGerente) {
+        validarGerente(idGerente);
+
+        return funcionarioService.findAll()
+                .stream()
+                .filter(funcionario -> funcionario.getCargo() == CargoFuncionario.OPERADOR)
+                .toList();
+    }
+   
+    public List<Funcionario> listarEstoquistas(Long idGerente) {
+        validarGerente(idGerente);
+
+        return funcionarioService.findAll()
+                .stream()
+                .filter(funcionario -> funcionario.getCargo() == CargoFuncionario.ESTOQUISTA)
+                .toList();
+    }
+    
     public Funcionario cadastrarFuncionario(Long idGerente, FuncionarioRequestDTO dto) {
         validarGerente(idGerente);
         return funcionarioService.insert(dto);

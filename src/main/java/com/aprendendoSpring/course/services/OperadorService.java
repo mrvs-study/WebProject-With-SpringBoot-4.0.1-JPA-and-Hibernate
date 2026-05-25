@@ -1,5 +1,10 @@
 package com.aprendendoSpring.course.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.aprendendoSpring.course.dtos.PagamentoRequestDTO;
 import com.aprendendoSpring.course.dtos.VendaRequestDTO;
 import com.aprendendoSpring.course.entities.Funcionario;
@@ -8,10 +13,6 @@ import com.aprendendoSpring.course.entities.Pagamento;
 import com.aprendendoSpring.course.entities.Venda;
 import com.aprendendoSpring.course.entities.enums.CargoFuncionario;
 import com.aprendendoSpring.course.exceptions.BusinessException;
-
-import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 @Service
 public class OperadorService {
@@ -29,6 +30,8 @@ public class OperadorService {
         this.vendaService = vendaService;
         this.pagamentoService = pagamentoService;
     }
+    
+   
 
     public Venda registrarVenda(Long idOperador, VendaRequestDTO dto) {
         validarOperador(idOperador);

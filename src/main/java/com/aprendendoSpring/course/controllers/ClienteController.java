@@ -21,10 +21,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/fornecedores")
+@RequestMapping("/clientes")
 @Tag(
-    name = "Fornecedor",
-    description = "Endpoints responsáveis pelo cadastro, consulta, atualização e remoção de fornecedores."
+    name = "clientes",
+    description = "Endpoints responsáveis pelo cadastro, consulta, atualização e remoção de clientes."
 )
 public class ClienteController {
 
