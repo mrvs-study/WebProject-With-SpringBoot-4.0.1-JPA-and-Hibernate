@@ -1,0 +1,161 @@
+{
+  "info": {
+    "name": "Easy Market API",
+    "description": "Collection para testar endpoints principais do Easy Market.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "Produtos",
+      "item": [
+        {
+          "name": "Criar produto",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/produtos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Arroz\",\n  \"categoria\": \"Alimentos\",\n  \"preco\": 6.50,\n  \"dataDeValidade\": \"2026-12-31T00:00:00Z\",\n  \"imgUrlProduto\": \"https://exemplo.com/arroz.png\"\n}"
+            }
+          }
+        },
+        { "name": "Listar produtos", "request": { "method": "GET", "url": "{{base_url}}/produtos" } },
+        { "name": "Buscar produto por ID", "request": { "method": "GET", "url": "{{base_url}}/produtos/1" } },
+        {
+          "name": "Atualizar produto",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/produtos/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Arroz Tipo 1\",\n  \"categoria\": \"Alimentos\",\n  \"preco\": 7.00,\n  \"dataDeValidade\": \"2026-12-31T00:00:00Z\",\n  \"imgUrlProduto\": \"https://exemplo.com/arroz.png\"\n}"
+            }
+          }
+        },
+        { "name": "Remover produto", "request": { "method": "DELETE", "url": "{{base_url}}/produtos/1" } },
+        { "name": "Produtos próximos do vencimento", "request": { "method": "GET", "url": "{{base_url}}/produtos/proximos-vencimento?dias=30" } }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "Criar cliente",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/clientes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cliente Teste\",\n  \"cpf\": \"12345678901\",\n  \"email\": \"cliente@email.com\",\n  \"telefone\": \"81999999999\",\n  \"senha\": \"1234\"\n}"
+            }
+          }
+        },
+        { "name": "Listar clientes", "request": { "method": "GET", "url": "{{base_url}}/clientes" } }
+      ]
+    },
+    {
+      "name": "Vendas",
+      "item": [
+        {
+          "name": "Registrar venda",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/vendas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 2\n    }\n  ]\n}"
+            }
+          }
+        },
+        { "name": "Listar vendas", "request": { "method": "GET", "url": "{{base_url}}/vendas" } },
+        { "name": "Finalizar venda", "request": { "method": "PUT", "url": "{{base_url}}/vendas/1/finalizar" } },
+        { "name": "Vendas por status", "request": { "method": "GET", "url": "{{base_url}}/vendas/status/FINALIZADA" } }
+      ]
+    },
+    {
+      "name": "Estoque",
+      "item": [
+        {
+          "name": "Cadastrar estoque",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/estoques",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produtoId\": 1,\n  \"quantidadeAtual\": 50,\n  \"quantidadeMaxima\": 100,\n  \"localizacao\": \"Prateleira A1\"\n}"
+            }
+          }
+        },
+        { "name": "Produtos sem estoque", "request": { "method": "GET", "url": "{{base_url}}/estoques/sem-estoque" } },
+        { "name": "Entrada de estoque", "request": { "method": "PUT", "url": "{{base_url}}/estoques/1/entrada?quantidade=10&motivo=Reposição" } },
+        { "name": "Saída de estoque", "request": { "method": "PUT", "url": "{{base_url}}/estoques/1/saida?quantidade=5&motivo=Venda" } }
+      ]
+    },
+    {
+      "name": "Pagamentos",
+      "item": [
+        {
+          "name": "Registrar pagamento",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/pagamentos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vendaId\": 1,\n  \"formaPagamento\": \"PIX\",\n  \"valor\": 13.00\n}"
+            }
+          }
+        },
+        { "name": "Processar pagamento", "request": { "method": "PUT", "url": "{{base_url}}/pagamentos/1/processar" } },
+        { "name": "Pagamentos pendentes", "request": { "method": "GET", "url": "{{base_url}}/pagamentos/pendentes" } }
+      ]
+    },
+    {
+      "name": "Compras",
+      "item": [
+        {
+          "name": "Registrar compra",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/compras",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fornecedorId\": 1,\n  \"itens\": [\n    {\n      \"produtoId\": 1,\n      \"quantidade\": 20\n    }\n  ]\n}"
+            }
+          }
+        },
+        { "name": "Compras por fornecedor", "request": { "method": "GET", "url": "{{base_url}}/compras/fornecedor/1" } }
+      ]
+    },
+    {
+      "name": "Movimentações de estoque",
+      "item": [
+        {
+          "name": "Registrar entrada",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/movimentacoes-estoque/entrada",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estoqueId\": 1,\n  \"quantidade\": 10,\n  \"motivo\": \"Reposição\"\n}"
+            }
+          }
+        },
+        { "name": "Movimentações por tipo", "request": { "method": "GET", "url": "{{base_url}}/movimentacoes-estoque/tipo/ENTRADA" } }
+      ]
+    }
+  ]
+}

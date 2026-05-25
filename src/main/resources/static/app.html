@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EasyMarket</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div><span class="logo-easy">EASY</span><span class="logo-market">MARKET</span></div>
+      <div class="sidebar-version">v1.0 // Gestão</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Principal</div>
+      <div class="nav-item active" data-page="dashboard">Dashboard</div>
+      <div class="nav-item" data-page="pdv">PDV — Vendas <span class="nav-badge" id="badge-pdv" style="display:none">0</span></div>
+
+      <div class="nav-label">Cadastros</div>
+      <div class="nav-item" data-page="produtos">Produtos</div>
+      <div class="nav-item" data-page="clientes">Clientes</div>
+      <div class="nav-item" data-page="fornecedores">Fornecedores</div>
+      <div class="nav-item" data-page="estoque">Estoque <span class="nav-badge" id="badge-estoque" style="display:none">0</span></div>
+
+      <div class="nav-label">Gestão</div>
+      <div class="nav-item" data-page="relatorios">Relatórios</div>
+      <div class="nav-item" data-page="usuarios">Usuários</div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <div style="flex:1;min-width:0">
+        <div class="user-name" id="userName">Admin</div>
+        <div class="user-role" id="userRole">Administrador</div>
+      </div>
+      <button onclick="logout()" title="Sair" style="background:none;border:none;color:#4a6079;cursor:pointer;font-size:11px;padding:4px 8px;border-radius:4px;flex-shrink:0;font-weight:600;transition:color .15s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#4a6079'">Sair</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <section id="page-dashboard" class="page active">
+      <div class="page-header">
+        <div>
+          <h1>Dashboard</h1>
+          <div class="sub" id="dash-date"></div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" data-require-page="pdv" onclick="navigate('pdv')">Nova Venda</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="stats-grid" id="dash-stats">
+          <div class="stat-card"><div class="stat-label">Faturamento Hoje</div><div class="stat-value" id="stat-fat">—</div><div class="stat-sub" id="stat-fat-sub"></div></div>
+          <div class="stat-card"><div class="stat-label">Vendas Hoje</div><div class="stat-value" id="stat-vendas">—</div><div class="stat-sub" id="stat-vendas-sub"></div></div>
+          <div class="stat-card"><div class="stat-label">Alertas Estoque</div><div class="stat-value danger" id="stat-estoque">—</div><div class="stat-sub danger" id="stat-estoque-sub"></div></div>
+          <div class="stat-card"><div class="stat-label">Clientes Ativos</div><div class="stat-value" id="stat-clientes">—</div><div class="stat-sub" id="stat-clientes-sub"></div></div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-title">Faturamento — últimos 7 dias</div>
+            <div class="bar-chart" id="dash-chart"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Formas de Pagamento</div>
+            <div class="payment-methods" id="dash-payments"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <span class="table-title">Últimas Vendas</span>
+            <span class="table-link" data-require-page="relatorios" style="cursor:pointer" onclick="navigate('relatorios')">Ver relatório →</span>
+          </div>
+          <table>
+            <thead><tr>
+              <th>#</th><th>Cliente</th><th>Itens</th><th>Total</th><th>Status</th>
+            </tr></thead>
+            <tbody id="dash-sales-body">
+              <tr><td colspan="5" class="loading">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-pdv" class="page">
+      <div class="page-header">
+        <div><h1>Ponto de Venda (PDV)</h1></div>
+        <div class="header-actions">
+          <input class="search-input" type="text" placeholder="Buscar produto..." id="pdv-search" oninput="filterPdvProducts()">
+        </div>
+      </div>
+      <div class="pdv-layout" style="flex:1;overflow:hidden">
+        <div class="pdv-products">
+          <div class="filter-tabs" id="pdv-filter-tabs"></div>
+          <div class="product-grid" id="pdv-product-grid">
+            <div class="loading">Carregando produtos...</div>
+          </div>
+        </div>
+        <div class="pdv-cart">
+          <div class="cart-header">Carrinho (<span id="cart-count">0</span> <span style="color:var(--text-secondary)">itens</span>)</div>
+          <div class="cart-items" id="cart-items">
+            <div class="cart-empty">Selecione produtos ao lado</div>
+          </div>
+          <div class="cart-footer">
+            <div class="cart-total-row">
+              <span class="cart-total-label">Total</span>
+              <span class="cart-total-value" id="cart-total">R$ 0,00</span>
+            </div>
+            <div class="payment-btns">
+              <button class="pay-btn" data-method="DINHEIRO" onclick="selectPayment(this)">Dinheiro</button>
+              <button class="pay-btn" data-method="PIX" onclick="selectPayment(this)">Pix</button>
+              <button class="pay-btn" data-method="CARTAO_CREDITO" onclick="selectPayment(this)">Créd.</button>
+              <button class="pay-btn" data-method="CARTAO_DEBITO" onclick="selectPayment(this)">Déb.</button>
+            </div>
+            <button class="btn-finalize" id="btn-finalize" onclick="finalizarVenda()">Finalizar Venda</button>
+            <button class="btn-cancel-sale" onclick="cancelarVenda()">Cancelar Venda (RF-016)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-produtos" class="page">
+      <div class="page-header">
+        <div><h1>Produtos</h1></div>
+        <div class="header-actions">
+          <input class="search-input" type="text" placeholder="Buscar produto..." id="prod-search" oninput="filterProdutos()">
+          <button class="btn btn-primary" data-write="produtos" onclick="openProdutoModal(null)">Novo Produto</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th>Código</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th>Status</th><th>Ações</th>
+            </tr></thead>
+            <tbody id="produtos-body">
+              <tr><td colspan="7" class="loading">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-clientes" class="page">
+      <div class="page-header">
+        <div><h1>Clientes</h1></div>
+        <div class="header-actions">
+          <input class="search-input" type="text" placeholder="Buscar por nome ou CPF..." id="cli-search" oninput="filterClientes()">
+          <button class="btn btn-green" data-write="clientes" onclick="openClienteModal(null)">Novo Cliente</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th><th>Ações</th>
+            </tr></thead>
+            <tbody id="clientes-body">
+              <tr><td colspan="5" class="loading">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-fornecedores" class="page">
+      <div class="page-header">
+        <div><h1>Fornecedores</h1></div>
+        <div class="header-actions">
+          <button class="btn btn-primary" data-write="fornecedores" onclick="openFornecedorModal(null)">Novo Fornecedor</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="suppliers-grid" id="fornecedores-grid">
+          <div class="loading">Carregando...</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-estoque" class="page">
+      <div class="page-header">
+        <div><h1>Controle de Estoque</h1></div>
+      </div>
+      <div class="page-body">
+        <div id="estoque-alert" class="stock-alert hidden"></div>
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th>Produto</th><th>Atual</th><th>Máximo</th><th>Localização</th><th>Situação</th><th>Progresso</th><th>Ação</th>
+            </tr></thead>
+            <tbody id="estoque-body">
+              <tr><td colspan="7" class="loading">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-relatorios" class="page">
+      <div class="page-header">
+        <div><h1>Relatórios</h1></div>
+        <div class="header-actions rel-tabs">
+          <button class="rel-tab active" onclick="setRelTab(this,'diario')">Diário</button>
+          <button class="rel-tab" onclick="setRelTab(this,'mensal')">Mensal</button>
+          <button class="rel-tab" onclick="setRelTab(this,'fluxo')">Fluxo de Caixa</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="stat-card">
+            <div class="stat-label">Receita do dia</div>
+            <div class="stat-value" id="rel-receita">—</div>
+            <div class="stat-sub up" id="rel-receita-sub"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Quantidade de vendas</div>
+            <div class="stat-value" id="rel-qtd">—</div>
+            <div class="stat-sub" id="rel-ticket"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Cancelamentos</div>
+            <div class="stat-value danger" id="rel-cancel">—</div>
+            <div class="stat-sub danger" id="rel-cancel-sub"></div>
+          </div>
+        </div>
+        <div class="chart-card" style="margin-top:0">
+          <div class="chart-title" id="rel-chart-title">Vendas por hora</div>
+          <div class="bar-chart" id="rel-chart" style="height:140px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-usuarios" class="page">
+      <div class="page-header">
+        <div><h1>Usuários do Sistema</h1></div>
+        <div class="header-actions">
+          <button class="btn btn-primary" data-write="usuarios" onclick="openFuncionarioModal(null)">Novo Usuário</button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="table-card">
+          <table>
+            <thead><tr>
+              <th>#</th><th>Nome</th><th>E-mail</th><th>CPF</th><th>Cargo</th><th>Salário</th><th>Ações</th>
+            </tr></thead>
+            <tbody id="usuarios-body">
+              <tr><td colspan="7" class="loading">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="modal-produto" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-produto-title">Novo Produto</span>
+      <button class="modal-close" onclick="closeModal('modal-produto')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mp-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome do Produto *</label>
+          <input type="text" id="mp-nome" placeholder="Ex: Arroz Tipo 1 (5kg)">
+        </div>
+        <div class="form-group">
+          <label>Categoria *</label>
+          <input type="text" id="mp-categoria" placeholder="Ex: Grãos">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Preço (R$) *</label>
+          <input type="number" id="mp-preco" step="0.01" min="0" placeholder="0,00">
+        </div>
+        <div class="form-group">
+          <label>Validade</label>
+          <input type="date" id="mp-validade">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>URL da Imagem</label>
+        <input type="text" id="mp-img" placeholder="https://...">
+      </div>
+      <div id="mp-estoque-section">
+        <div style="margin:12px 0 8px;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Estoque Inicial</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Localização *</label>
+            <input type="text" id="mp-localizacao" placeholder="Ex: Prateleira A1">
+          </div>
+          <div class="form-group">
+            <label>Qtd. Máxima *</label>
+            <input type="number" id="mp-qtd-max" min="1" placeholder="Ex: 100">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-produto')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveProduto()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-cliente" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-cliente-title">Novo Cliente</span>
+      <button class="modal-close" onclick="closeModal('modal-cliente')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mc-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome *</label>
+          <input type="text" id="mc-nome" placeholder="Nome completo">
+        </div>
+        <div class="form-group">
+          <label>CPF *</label>
+          <input type="text" id="mc-cpf" placeholder="000.000.000-00">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>E-mail *</label>
+          <input type="email" id="mc-email" placeholder="email@exemplo.com">
+        </div>
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="text" id="mc-telefone" placeholder="(81) 9 9999-9999">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Senha *</label>
+        <input type="password" id="mc-senha" placeholder="••••••••">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-cliente')">Cancelar</button>
+      <button class="btn btn-green" onclick="saveCliente()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-fornecedor" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-fornecedor-title">Novo Fornecedor</span>
+      <button class="modal-close" onclick="closeModal('modal-fornecedor')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mf-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Razão Social *</label>
+          <input type="text" id="mf-razao" placeholder="Distribuidora ABC Ltda.">
+        </div>
+        <div class="form-group">
+          <label>CNPJ *</label>
+          <input type="text" id="mf-cnpj" placeholder="00.000.000/0001-00">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="text" id="mf-telefone" placeholder="(81) 3333-4444">
+        </div>
+        <div class="form-group">
+          <label>CEP</label>
+          <input type="text" id="mf-cep" placeholder="50000-000">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>E-mail *</label>
+        <input type="email" id="mf-email" placeholder="contato@fornecedor.com">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-fornecedor')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveFornecedor()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-repor" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Repor Estoque</span>
+      <button class="modal-close" onclick="closeModal('modal-repor')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mr-id">
+      <p style="margin-bottom:16px;color:var(--text-secondary);font-size:13px">Produto: <strong id="mr-produto"></strong></p>
+      <div class="form-group">
+        <label>Quantidade a adicionar *</label>
+        <input type="number" id="mr-qtd" min="1" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Motivo</label>
+        <input type="text" id="mr-motivo" placeholder="Reposição de estoque">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-repor')">Cancelar</button>
+      <button class="btn btn-green" onclick="reporEstoque()">Confirmar Reposição</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-novo-estoque" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Cadastrar Estoque</span>
+      <button class="modal-close" onclick="closeModal('modal-novo-estoque')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mne-produto-id">
+      <div class="form-group">
+        <label>Produto</label>
+        <input type="text" id="mne-produto-nome" readonly style="background:#f8fafc;cursor:default">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Localização *</label>
+          <input type="text" id="mne-localizacao" placeholder="Ex: Prateleira A1">
+        </div>
+        <div class="form-group">
+          <label>Qtd. Máxima *</label>
+          <input type="number" id="mne-qtd-max" min="1" placeholder="Ex: 100">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-novo-estoque')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveNovoEstoque()">Cadastrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-confirm" class="modal-overlay hidden">
+  <div class="modal" style="width:380px">
+    <div class="modal-header">
+      <span class="modal-title">Confirmar exclusão</span>
+      <button class="modal-close" onclick="closeModal('modal-confirm')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-msg" style="color:var(--text-secondary);font-size:13px"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-confirm')">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-btn">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-funcionario" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-funcionario-title">Novo Usuário</span>
+      <button class="modal-close" onclick="closeModal('modal-funcionario')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mfunc-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome *</label>
+          <input type="text" id="mfunc-nome" placeholder="Nome completo">
+        </div>
+        <div class="form-group">
+          <label>CPF *</label>
+          <input type="text" id="mfunc-cpf" placeholder="000.000.000-00">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>E-mail *</label>
+          <input type="email" id="mfunc-email" placeholder="email@easymarket.com">
+        </div>
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="text" id="mfunc-telefone" placeholder="(81) 9 9999-9999">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cargo *</label>
+          <select id="mfunc-cargo">
+            <option value="GERENTE">Gerente</option>
+            <option value="OPERADOR">Operador</option>
+            <option value="ESTOQUISTA">Estoquista</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Salário (R$) *</label>
+          <input type="number" id="mfunc-salario" step="0.01" min="0.01" placeholder="0,00">
+        </div>
+      </div>
+      <div class="form-group">
+        <label id="mfunc-senha-label">Senha *</label>
+        <input type="password" id="mfunc-senha" placeholder="Mínimo 4 caracteres">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-funcionario')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveFuncionario()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
